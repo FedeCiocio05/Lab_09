@@ -113,8 +113,32 @@ class Model:
         for i in range(start_index, len(self.lista_escursioni_parco)):
             escursione = self.lista_escursioni_parco[i]
             # 🟡 C - if filter: ...
+            # Se non c'è un limite di giorni oppure la nuova durata non lo supera
             if self._max_giorni is None or self._max_giorni >= (durata_corrente + escursione.durata_giorni):
+                # Se non c'è un budget massimo oppure il nuovo costo non lo supera
                 if self._max_budget is None or self._max_budget >= (costo_corrente + escursione.costo):
-                    pass #avanti da qui
+                    # intersection() trova i punti in comune tra i due set punti_usati e escursione.punti_interesse: con "not" deve essere vuota
+                    if not punti_usati.intersection(escursione.punti_interesse):
+
+                        # 🔵 D - compute_partial()
+
+                        # Inserisce l'escursione nella combinazione corrente
+                        pacchetto_parziale.append(escursione)
+
+                        # Calcola la durata totale dopo l'aggiunta
+                        new_durata = durata_corrente + escursione.durata_giorni
+
+                        # Calcola il costo totale dopo l'aggiunta
+                        new_costo = costo_corrente + escursione.costo
+
+                        # Somma al valore corrente i voti dei punti dell'escursione
+                        new_valore = valore_corrente + sum(punto.voto_visitatori for punto in escursione.punti_interesse)
+
+                        # Registra tutti i punti dell'escursione come già usati
+                        punti_usati.update(escursione.punti_interesse)
+
+                        # 🔴 E - recursion(..., level + 1)
+                        self._ricorsione(i+1, pacchetto_parziale, new_durata, new_costo, new_valore, punti_usati)
+
 
         # TODO: è possibile cambiare i parametri formali della funzione se ritenuto opportuno
