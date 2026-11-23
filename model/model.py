@@ -1,6 +1,4 @@
-import copy
-
-from UI.controller import Controller
+#from UI.controller import Controller
 from database.parco_DAO import ParcoDAO
 from database.escursione_DAO import EscursioneDAO
 from database.punto_interesse_DAO import PuntoInteresseDAO
@@ -140,5 +138,10 @@ class Model:
                         # 🔴 E - recursion(..., level + 1)
                         self._ricorsione(i+1, pacchetto_parziale, new_durata, new_costo, new_valore, punti_usati)
 
+                        # 🟣 F - back_tracking()
+                        # Rimuove l’ultima escursione aggiunta
+                        pacchetto_parziale.pop()
 
+                        # Rimuove i punti dell’escursione appena provata
+                        punti_usati.difference_update(escursione.punti_interesse)
         # TODO: è possibile cambiare i parametri formali della funzione se ritenuto opportuno
